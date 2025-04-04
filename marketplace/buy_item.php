@@ -21,10 +21,15 @@ if ($seller_result && mysqli_num_rows($seller_result) > 0) {
     $row = mysqli_fetch_assoc($seller_result);
     $seller_id = $row['user_id'];
 
-    // Now insert into marketplace_orders
+    // Insert order into marketplace_orders
     $query = "INSERT INTO marketplace_orders (item_id, buyer_id, seller_id) VALUES ('$item_id', '$buyer_id', '$seller_id')";
 
     if (mysqli_query($conn, $query)) {
+        // Insert notification AFTER ensuring order is placed
+        $notification_msg = "Your item has been purchased by Buyer ID: $buyer_id";
+        $notification_query = "INSERT INTO notifications (user_id, message) VALUES ('$seller_id', '$notification_msg')";
+        mysqli_query($conn, $notification_query);
+
         echo "<script>alert('Item purchased successfully!'); window.location='index.php';</script>";
     } else {
         echo "Error purchasing item: " . mysqli_error($conn);
@@ -32,5 +37,4 @@ if ($seller_result && mysqli_num_rows($seller_result) > 0) {
 } else {
     die("Seller not found for this item.");
 }
-
 ?>
