@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'farmer') {
     exit();
 }
 include '../config/db_connect.php';
-include 'header.php';
+include '../farmer/header.php';
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +16,7 @@ include 'header.php';
     <title>Farmer Dashboard | AgriCycle</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    
 </head>
 <body>
 
@@ -32,7 +32,7 @@ include 'header.php';
                     <i class="bi bi-recycle display-4 text-success"></i>
                     <h5 class="card-title mt-3">Waste Listings</h5>
                     <p class="card-text">View and manage your waste listings.</p>
-                    <a href="../marketplace.php" class="btn btn-outline-success">Go to Marketplace</a>
+                    <a href="../farmer/waste_requests.php" class="btn btn-outline-success">Go to Waste Requests</a>
                 </div>
             </div>
         </div>
@@ -43,7 +43,7 @@ include 'header.php';
                     <i class="bi bi-truck display-4 text-primary"></i>
                     <h5 class="card-title mt-3">Pickup Requests</h5>
                     <p class="card-text">Schedule and track waste pickup services.</p>
-                    <a href="../pickup_requests.php" class="btn btn-outline-primary">Manage Pickups</a>
+                    <a href="../farmer/pickup_requests.php" class="btn btn-outline-primary">Manage Pickups</a>
                 </div>
             </div>
         </div>
@@ -76,7 +76,7 @@ include 'header.php';
                 <div class="card-body">
                     <h5 class="card-title">Government Schemes</h5>
                     <p>Check latest subsidies and policies.</p>
-                    <a href="../govt_schemes.php" class="btn btn-outline-info">View Schemes</a>
+                    <a href="../farmer/govt_schemes.php" class="btn btn-outline-info">View Schemes</a>
                 </div>
             </div>
         </div>

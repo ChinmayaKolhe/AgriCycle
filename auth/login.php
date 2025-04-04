@@ -6,27 +6,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $query = "SELECT * FROM users WHERE email='$email'";
-    $result = mysqli_query($conn, $query);
+    // Hardcoded Admin Credentials
+    if ($email === 'admin@agricycle.com' && $password === 'admin123') {
+        $_SESSION['user_id'] = 999; 
+        $_SESSION['role'] = 'admin';
+        header("Location: ../dashboard/admin_dashboard.php");
+        exit();
+    }
+
+    $query = "SELECT * FROM users WHERE email=?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     $user = mysqli_fetch_assoc($result);
 
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['role'] = $user['role'];
+    if ($user) {
+        // Debugging - Print role before redirecting
+        echo "User Role: " . $user['role']; 
 
-        if ($user['role'] == 'farmer') {
-            header("Location: ../dashboard/farmer_dashboard.php");
-        } elseif ($user['role'] == 'buyer') {
-            header("Location: ../dashboard/buyer_dashboard.php");
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['role'] = $user['role'];
+
+            if ($user['role'] == 'farmer') {
+                header("Location: ../dashboard/farmer_dashboard.php");
+            } elseif ($user['role'] == 'buyer') {
+                header("Location: ../dashboard/buyer_dashboard.php");
+            } elseif ($user['role'] == 'insurance_agent') {
+                header("Location: ../dashboard/insurance_agent_dashboard.php");
+            } else {
+                echo "Error: Undefined Role!";
+                exit();
+            }
+            exit();
         } else {
-            header("Location: ../dashboard/admin_dashboard.php");
+            $error = "Invalid Email or Password!";
         }
-        exit();
     } else {
         $error = "Invalid Email or Password!";
     }
 }
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,28 +60,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login | AgriCycle</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
+    
+    <style>
+        body {
+            background: url('../assets/images/login.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            width: 350px;
+            padding: 20px;
+            background: transparent;
+            text-align: center;
+        }
+        .login-form {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .btn-home {
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 
 <div class="login-container">
     <form class="login-form" method="POST">
-        <h2>Login to AgriCycle</h2>
-        
+        <h3>Login</h3>
+
         <?php if (isset($error)) { echo "<div class='alert alert-danger'>$error</div>"; } ?>
-        
-        <div class="form-group">
-            <label>Email:</label>
-            <input type="email" name="email" class="form-control" required>
+
+        <div class="form-group mb-2">
+            <input type="email" name="email" class="form-control" placeholder="Email" required>
         </div>
 
-        <div class="form-group">
-            <label>Password:</label>
-            <input type="password" name="password" class="form-control" required>
+        <div class="form-group mb-3">
+            <input type="password" name="password" class="form-control" placeholder="Password" required>
         </div>
 
-        <button type="submit" class="btn btn-success">Login</button>
+        <button type="submit" class="btn btn-success w-100">Login</button>
 
-        <p class="mt-3">Don't have an account? <a href="register.php">Register Here</a></p>
+        <p class="mt-2">Don't have an account? <a href="register.php">Register</a></p>
+        <a href="../index.php" class="btn btn-primary btn-home">Go to Home</a>
     </form>
 </div>
 
