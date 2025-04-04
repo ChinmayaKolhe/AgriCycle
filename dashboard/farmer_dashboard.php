@@ -6,6 +6,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'farmer') {
 }
 include '../config/db_connect.php';
 include '../farmer/header.php';
+
+$farmer_id = $_SESSION['user_id'];
+
+// Fetch unread notifications for the farmer
+$notifications_query = "SELECT * FROM notifications WHERE user_id = '$farmer_id' AND is_read = FALSE ORDER BY created_at DESC";
+$result = mysqli_query($conn, $notifications_query);
 ?>
 
 <!DOCTYPE html>
@@ -24,8 +30,32 @@ include '../farmer/header.php';
     <h2 class="text-success">Welcome, Farmer!</h2>
     <p class="text-muted">Manage your waste, explore the marketplace, and connect with the community.</p>
 
+    <!-- Notifications Section -->
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-bell-fill text-danger"></i> Notifications</h5>
+                    <?php if (mysqli_num_rows($result) > 0): ?>
+                        <ul class="list-group" id="notificationList">
+                            <?php while ($notification = mysqli_fetch_assoc($result)): ?>
+                                <li class="list-group-item">
+                                    <?= htmlspecialchars($notification['message']) ?>
+                                    <small class="text-muted">[<?= $notification['created_at'] ?>]</small>
+                                </li>
+                            <?php endwhile; ?>
+                        </ul>
+                        <button class="btn btn-danger mt-2" id="markAllRead">Mark All as Read</button>
+                    <?php else: ?>
+                        <p>No new notifications.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Dashboard Cards -->
-    <div class="row g-4">
+    <div class="row g-4 mt-4">
         <div class="col-md-4">
             <div class="card shadow-lg border-0">
                 <div class="card-body text-center">
@@ -100,6 +130,15 @@ new Chart(ctx, {
     options: {
         responsive: true
     }
+});
+
+// Mark notifications as read using AJAX
+document.getElementById('markAllRead').addEventListener('click', function() {
+    fetch('mark_notifications_read.php', { method: 'POST' })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('notificationList').innerHTML = '<p>All notifications marked as read.</p>';
+    });
 });
 </script>
 
