@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'buyer') {
     exit();
 }
 include '../config/db_connect.php';
-include 'header.php';
+include '../buyer/header.php';
 ?>
 
 <!DOCTYPE html>
