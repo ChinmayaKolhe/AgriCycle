@@ -2,53 +2,63 @@
 session_start();
 include '../config/db_connect.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    // Hardcoded Admin Credentials
-    if ($email === 'admin@agricycle.com' && $password === 'admin123') {
-        $_SESSION['user_id'] = 999; 
-        $_SESSION['role'] = 'admin';
-        header("Location: ../dashboard/admin_dashboard.php");
-        exit();
-    }
-
-    $query = "SELECT * FROM users WHERE email=?";
+function checkCredentials($conn, $table, $email, $password) {
+    $query = "SELECT * FROM $table WHERE email=?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $user = mysqli_fetch_assoc($result);
 
-    if ($user) {
-        // Debugging - Print role before redirecting
-        echo "User Role: " . $user['role']; 
-
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['role'] = $user['role'];
-
-            if ($user['role'] == 'farmer') {
-                header("Location: ../dashboard/farmer_dashboard.php");
-            } elseif ($user['role'] == 'buyer') {
-                header("Location: ../dashboard/buyer_dashboard.php");
-            } elseif ($user['role'] == 'insurance_agent') {
-                header("Location: ../dashboard/insurance_agent_dashboard.php");
-            } else {
-                echo "Error: Undefined Role!";
-                exit();
-            }
-            exit();
-        } else {
-            $error = "Invalid Email or Password!";
-        }
-    } else {
-        $error = "Invalid Email or Password!";
+    if ($user && password_verify($password, $user['password'])) {
+        return $user;
     }
+    return false;
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Check Admin
+    $admin = checkCredentials($conn, "admins", $email, $password);
+    if ($admin) {
+        $_SESSION['user_id'] = $admin['id'];
+        $_SESSION['role'] = 'admin';
+        header("Location: ../dashboard/admin_dashboard.php");
+        exit();
+    }
+
+    // Check Farmer
+    $farmer = checkCredentials($conn, "farmers", $email, $password);
+    if ($farmer) {
+        $_SESSION['user_id'] = $farmer['id'];
+        $_SESSION['role'] = 'farmer';
+        header("Location: ../dashboard/farmer_dashboard.php");
+        exit();
+    }
+
+    // Check Buyer
+    $buyer = checkCredentials($conn, "buyers", $email, $password);
+    if ($buyer) {
+        $_SESSION['user_id'] = $buyer['id'];
+        $_SESSION['role'] = 'buyer';
+        header("Location: ../dashboard/buyer_dashboard.php");
+        exit();
+    }
+
+    // Check Insurance Agent
+    $agent = checkCredentials($conn, "insurance_agents", $email, $password);
+    if ($agent) {
+        $_SESSION['user_id'] = $agent['id'];
+        $_SESSION['role'] = 'insurance_agent';
+        header("Location: ../dashboard/insurance_agent_dashboard.php");
+        exit();
+    }
+
+    $error = "Invalid Email or Password!";
 }
 ?>
-
 
 
 
