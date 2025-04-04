@@ -2,11 +2,12 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'buyer') {
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['buyer', 'farmer'])) {
     header("Location: ../auth/login.php");
     exit();
 }
 ?>
+
 
 <style>
 /* Custom Navbar Styling */
@@ -61,7 +62,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'buyer') {
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="../marketplace.php"><i class="bi bi-shop"></i> Marketplace</a>
+                    <a class="nav-link" href="../marketplace/index.php"><i class="bi bi-shop"></i> Marketplace</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../wishlist.php"><i class="bi bi-heart"></i> Wishlist</a>

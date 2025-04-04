@@ -3,10 +3,6 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'farmer') {
-    header("Location: ../auth/login.php");
-    exit();
-}
 ?>
 
 
@@ -30,7 +26,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'farmer') {
                     <a class="nav-link" href="pickup_requests.php"><i class="bi bi-truck"></i> Pickup Requests</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="marketplace.php"><i class="bi bi-shop"></i> Marketplace</a>
+                    <a class="nav-link" href="../marketplace/index.php"><i class="bi bi-shop"></i> Marketplace</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../community/forum.php"><i class="bi bi-people"></i> Community</a>

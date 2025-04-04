@@ -13,7 +13,7 @@
                     <a class="nav-link" href="../dashboard/farmer_dashboard.php"><i class="bi bi-house-door"></i> Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../farmer/marketplace.php"><i class="bi bi-shop"></i> Marketplace</a>
+                    <a class="nav-link" href="../marketplace/index.php"><i class="bi bi-shop"></i> Marketplace</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../community/forum.php"><i class="bi bi-people"></i> Community</a>

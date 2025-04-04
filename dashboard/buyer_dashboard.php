@@ -32,7 +32,7 @@ include '../buyer/header.php';
                     <i class="bi bi-cart display-4 text-primary"></i>
                     <h5 class="card-title mt-3">Marketplace</h5>
                     <p class="card-text">Browse and purchase waste materials.</p>
-                    <a href="../marketplace.php" class="btn btn-outline-primary">Go to Marketplace</a>
+                    <a href="../marketplace/index.php" class="btn btn-outline-primary">Go to Marketplace</a>
                 </div>
             </div>
         </div>
